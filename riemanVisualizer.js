@@ -11,7 +11,6 @@ function setup() {
   graph.calibrateSkipX();
   graph.calibrateScaleX();
   graph.fillRange();
-  graph.fillDomain();
   graph.calibrateSkipY();
   graph.calibrateScaleY();
   graph.drawGraph();
@@ -23,7 +22,7 @@ function draw() {
   graph.drawGraph();
   graph.drawFunction();
   //graph.leftRiemann();
-  graph.rightRiemann();
+  //graph.rightRiemann();
 
   text(mouseX+ ' , '+mouseY, mouseX, mouseY);
 }
@@ -31,35 +30,14 @@ function draw() {
 function Graph() {
 
   this.xAxisPos;
-  this.yAxisPos;
   let expression = "x";
-  this.x = 0;
-  this.y = 0;
-  this.domain = [];
   this.range = [];
-  this.leftBoundary = -9;
-  this.rightBoundary = 10;
+  this.leftBoundary = -12;
+  this.rightBoundary = -10;
   this.n = 9;
   this.rectWidth = (this.rightBoundary-this.leftBoundary)/this.n;
   
-  this.dMin = () => {
-    if(this.leftBoundary < 0){
-      return this.leftBoundary;
-    }
-    return 0;
-  }
-  
-  this.dMax = () => {
-    if(this.rightBoundary > 0){
-      return this.rightBoundary;
-    }
-    return 0;
-  }
-  this.lbY = evaluateAt(this.leftBoundary);
-  this.rbY = evaluateAt(this.rightBoundary);
 
-  
-  this.deltaX = (this.dMax() - this.dMin())/(this.n);
   // scale is the ratio of pixels to units in the function
   this.scale = createVector(64, 64);
   // refers to the intervals for the labels on the x and y axis
@@ -85,47 +63,44 @@ function Graph() {
       //long lines that create grid
       line(175, i * 64+80, 820, i * 64+80);
       //Currently on:
-      
+      textAlign(RIGHT);
       if(math.abs(this.rMin()) > math.abs(this.rMax())){
       currY = i*this.skip.y+this.rMin()
-      text(currY.toFixed(2),175, 720- i * 64)
+      text(currY.toFixed(1),175, 720- i * 64)
       if(currY == 0){
         //Meant to accentuate X axis
         strokeWeight(3);
         line(180, 720- i * 64, 820, 720- i * 64);
         strokeWeight(1)
-        textAlign(LEFT);
+        
         text('x-axis',825, 720- i * 64)
-        textAlign(RIGHT);
+  
         this.xAxisPos = 720- i * 64;
       }
     }else{
       currY = this.rMax()-i*this.skip.y
-      text(currY.toFixed(2),175, 80+ i * 64)
+      text(currY.toFixed(1),175, 80+ i * 64)
       if(currY == 0){
         //Meant to accentuate X axis
         strokeWeight(3);
         line(180, 80+ i * 64, 820, 80+ i * 64);
         strokeWeight(1)
-        textAlign(LEFT);
+        
         text('x-axis',825, 80+ i * 64)
-        textAlign(RIGHT);
         this.xAxisPos = 80+ i * 64;
     }
     }
     
-    let linesLeft = math.ceil((this.dMin()*-1)/this.skip.x);
+    //THIS LINES LEFT STUFF SHOULD BE DONE AWAY WITH ONCE THE GRAPH BEGINS TO BE DRAWN FROM LEFT BOUNDARY AS REFERENCE INSTEAD OF THE BUGGY INCORRECT X=0 REFERENCE LINE
     // draw the label lines on the x
     textAlign(CENTER);
+    strokeWeight(1)
     for (let i = 0; i <= 10; i++) {
       //short lines that create axis labels
       line(i * 64 + 180, 725, i * 64 + 180, 715);
       //long lines that create grid
       line(i * 64 + 180, 725, i * 64 + 180, 80);
-      text((this.dMin()+ i * this.skip.x).toFixed(1), i * 64 + 180, 745);
-      if(this.skip.x*linesLeft-(i)*this.skip.x == 0){
-        this.yAxisPos = i * 64 + 180;
-      }
+      text((this.leftBoundary+ i * this.skip.x).toFixed(1), i * 64 + 180, 745);
     }
 
   }
@@ -179,9 +154,6 @@ function Graph() {
 
   this.calibrateSkipX = () =>{
       this.skip.x = (this.rightBoundary-this.leftBoundary)/10;
-      //rounds up the skip in the y axis to ensure that 0 is able to be shown
-      //this.skip.y = math.ceil(this.skip.y/math.pow(10, this.numDigits(this.skip.y) - 1))*math.pow(10, this.numDigits(this.skip.y) - 1);
-      //this.skip.x = math.ceil(this.skip.x/math.pow(10, this.numDigits(this.skip.x) - 1))*math.pow(10, this.numDigits(this.skip.x) - 1);
       
   }
   this.calibrateSkipY = () =>{
@@ -199,19 +171,12 @@ function Graph() {
     this.scale.y = 64/this.skip.y;
 }
   
-  this.fillDomain = () => {
-    for(let i = 0; i<= 640; i++){
-      this.domain.push(this.dMin()+i/this.scale.x);
-    }
-  }
   this.fillRange = () => {
     
       for(let i = 0; i < 641; i++){
         this.range.push(evaluateAt(this.leftBoundary + i/this.scale.x));
       }
-      console.log(this.range)
-      console.log(this.rMax())
-      console.log(this.rMin())
+
   };
   function evaluateAt(x){
     let j;
@@ -250,9 +215,6 @@ function Graph() {
       return 0;
     }
     return minimum;
-  }
-  this.numDigits = (x) => {
-    return (Math.log10((x ^ (x >> 31)) - (x >> 31)) | 0) + 1;
   }
 
 }
