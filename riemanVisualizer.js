@@ -2,16 +2,18 @@
 let coords = [];
 let graph;
 
-const math = window.math;
+const math = window.math
 
 
 function setup() {
   createCanvas(900, 800);
   graph = new Graph();
+  graph.calibrateSkipX();
+  graph.calibrateScaleX();
   graph.fillRange();
   graph.fillDomain();
-  graph.calibrateSkip();
-  graph.calibrateScale();
+  graph.calibrateSkipY();
+  graph.calibrateScaleY();
   graph.drawGraph();
   graph.executeFunction();
 }
@@ -22,13 +24,15 @@ function draw() {
   graph.drawFunction();
   //graph.leftRiemann();
   graph.rightRiemann();
+
+  text(mouseX+ ' , '+mouseY, mouseX, mouseY);
 }
 
 function Graph() {
 
   this.xAxisPos;
   this.yAxisPos;
-  let expression = "x^3";
+  let expression = "x";
   this.x = 0;
   this.y = 0;
   this.domain = [];
@@ -74,14 +78,18 @@ function Graph() {
     fill(0);
     textAlign(RIGHT);
     // draw the label lines on the y
-    let linesBelow = math.ceil((this.rMin()*-1)/this.skip.y);
+ 
     for (let i = 0; i <= 10; i++) {
       //short lines that create axis labels
       line(175, i * 64+80, 185, i * 64+80);
       //long lines that create grid
       line(175, i * 64+80, 820, i * 64+80);
-      text(-(this.skip.y*linesBelow-(i)*this.skip.y).toFixed(2),175, 720- i * 64)
-      if(this.skip.y*linesBelow-(i)*this.skip.y == 0){
+      //Currently on:
+      
+      if(math.abs(this.rMin()) > math.abs(this.rMax())){
+      currY = i*this.skip.y+this.rMin()
+      text(currY.toFixed(2),175, 720- i * 64)
+      if(currY == 0){
         //Meant to accentuate X axis
         strokeWeight(3);
         line(180, 720- i * 64, 820, 720- i * 64);
@@ -91,7 +99,21 @@ function Graph() {
         textAlign(RIGHT);
         this.xAxisPos = 720- i * 64;
       }
+    }else{
+      currY = this.rMax()-i*this.skip.y
+      text(currY.toFixed(2),175, 80+ i * 64)
+      if(currY == 0){
+        //Meant to accentuate X axis
+        strokeWeight(3);
+        line(180, 80+ i * 64, 820, 80+ i * 64);
+        strokeWeight(1)
+        textAlign(LEFT);
+        text('x-axis',825, 80+ i * 64)
+        textAlign(RIGHT);
+        this.xAxisPos = 80+ i * 64;
     }
+    }
+    
     let linesLeft = math.ceil((this.dMin()*-1)/this.skip.x);
     // draw the label lines on the x
     textAlign(CENTER);
@@ -106,7 +128,7 @@ function Graph() {
       }
     }
 
-
+  }
     
   };
   //draws a bunch of small lines jumping by 1 pixel which generate the function
@@ -149,25 +171,33 @@ function Graph() {
   this.executeFunction = function(){
       //replaces the x in this.function and evaluates it then assigns the result to y which is pushed to coords
       //coords are an array of vectors x,y which have the final positions at which the lines are to be drawn
+      
       for(let i = 0; i<640; i++){
-        coords.push(createVector((this.dMin()+ i/this.scale.x) * this.scale.x + this.yAxisPos, this.xAxisPos - this.scale.y * evaluateAt(this.dMin()+ i/this.scale.x)));
+        coords.push(createVector(180 + i, this.xAxisPos - this.scale.y * evaluateAt(this.leftBoundary+ i/this.scale.x)));
       }
   }
 
-  this.calibrateSkip = () =>{
-      this.skip.x = (this.dMax()-this.dMin())/10;
-      this.skip.y = (this.rMax() - this.rMin())/10;
+  this.calibrateSkipX = () =>{
+      this.skip.x = (this.rightBoundary-this.leftBoundary)/10;
       //rounds up the skip in the y axis to ensure that 0 is able to be shown
       //this.skip.y = math.ceil(this.skip.y/math.pow(10, this.numDigits(this.skip.y) - 1))*math.pow(10, this.numDigits(this.skip.y) - 1);
       //this.skip.x = math.ceil(this.skip.x/math.pow(10, this.numDigits(this.skip.x) - 1))*math.pow(10, this.numDigits(this.skip.x) - 1);
       
   }
+  this.calibrateSkipY = () =>{
+    bigger = max([math.abs(this.rMax()), math.abs(this.rMin())])
 
-  this.calibrateScale = function(){
-      this.scale.x = 64/(this.skip.x);
-      this.scale.y = 64/this.skip.y;
+    this.skip.y = bigger/5;
+}
+
+  this.calibrateScaleX = function(){
+      this.scale.x = 64/this.skip.x;
+
   }
+  this.calibrateScaleY = function(){
 
+    this.scale.y = 64/this.skip.y;
+}
   
   this.fillDomain = () => {
     for(let i = 0; i<= 640; i++){
@@ -175,10 +205,13 @@ function Graph() {
     }
   }
   this.fillRange = () => {
-      
+    
       for(let i = 0; i < 641; i++){
-        this.range.push(evaluateAt(this.dMin() + i/(64/(((this.dMax()-this.dMin())/10)))));
+        this.range.push(evaluateAt(this.leftBoundary + i/this.scale.x));
       }
+      console.log(this.range)
+      console.log(this.rMax())
+      console.log(this.rMin())
   };
   function evaluateAt(x){
     let j;
@@ -192,29 +225,31 @@ function Graph() {
   }
   this.determineY = (i) => {
     if(evaluateAt(this.leftBoundary+i*this.rectWidth) >= 0){
-      return Math.min.apply(Math, [this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
+      return min([this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
     }else{
-      return Math.max.apply(Math, [this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
+      return max([this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
     }
   }
   this.determineHeight = (i) => {
     if(evaluateAt(this.leftBoundary+i*this.rectWidth) >= 0){
-      return this.xAxisPos - Math.min.apply(Math, [this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
+      return this.xAxisPos - min([this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
     }else{
-      return this.xAxisPos - Math.max.apply(Math, [this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
+      return this.xAxisPos - max([this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
     }
   }
   this.rMax = function(){
-    if(Math.max.apply(Math, this.range) < 0){
+    maximum = max(this.range)
+    if(maximum < 0){
       return 0;
     }
-    return Math.max.apply(Math, this.range);
+    return maximum;
   }
   this.rMin = function(){
-    if(Math.min.apply(Math, this.range) > 0){
+    minimum = min(this.range)
+    if(minimum > 0){
       return 0;
     }
-    return Math.min.apply(Math, this.range);
+    return minimum;
   }
   this.numDigits = (x) => {
     return (Math.log10((x ^ (x >> 31)) - (x >> 31)) | 0) + 1;
