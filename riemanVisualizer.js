@@ -30,10 +30,10 @@ function draw() {
 function Graph() {
 
   this.xAxisPos;
-  let expression = "x";
+  let expression = "abs(x)";
   this.range = [];
-  this.leftBoundary = -12;
-  this.rightBoundary = -10;
+  this.leftBoundary = -10;
+  this.rightBoundary = 10;
   this.n = 9;
   this.rectWidth = (this.rightBoundary-this.leftBoundary)/this.n;
   
@@ -91,7 +91,6 @@ function Graph() {
     }
     }
     
-    //THIS LINES LEFT STUFF SHOULD BE DONE AWAY WITH ONCE THE GRAPH BEGINS TO BE DRAWN FROM LEFT BOUNDARY AS REFERENCE INSTEAD OF THE BUGGY INCORRECT X=0 REFERENCE LINE
     // draw the label lines on the x
     textAlign(CENTER);
     strokeWeight(1)
@@ -106,16 +105,16 @@ function Graph() {
   }
     
   };
-  //draws a bunch of small lines jumping by 1 pixel which generate the function
-  //NEEDS TO BE UPDATED
 
+
+  //draws a bunch of small lines jumping by 1 pixel which generate the function
+  //This is why functions which are non-continuous look wonky
   this.drawFunction = function(){
+    strokeWeight(2)
     fill(0);
-    for(let i = 0; i<coords.length;i++){
-      try {
-        line(coords[i].x, coords[i].y,coords[i+1].x, coords[i+1].y);
-      } catch (TypeError) {
-      }
+    for(let i = 0; i<coords.length-1;i++){
+      line(coords[i].x, coords[i].y,coords[i+1].x, coords[i+1].y);
+      
     }
   }
   
@@ -188,6 +187,8 @@ function Graph() {
     }
     return j;
   }
+
+  //***THESE ARE BAD AND UGLY
   this.determineY = (i) => {
     if(evaluateAt(this.leftBoundary+i*this.rectWidth) >= 0){
       return min([this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
@@ -202,6 +203,8 @@ function Graph() {
       return this.xAxisPos - max([this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
     }
   }
+
+  //***
   this.rMax = function(){
     maximum = max(this.range)
     if(maximum < 0){
