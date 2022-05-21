@@ -15,6 +15,7 @@ function setup() {
   graph.calibrateScaleY();
   graph.drawGraph();
   graph.executeFunction();
+  console.log(coords)
 }
 
 function draw() {
@@ -22,7 +23,7 @@ function draw() {
   graph.drawGraph();
   graph.drawFunction();
   //graph.leftRiemann();
-  //graph.rightRiemann();
+  graph.rightRiemann();
 
   text(mouseX+ ' , '+mouseY, mouseX, mouseY);
 }
@@ -30,14 +31,14 @@ function draw() {
 function Graph() {
 
   this.xAxisPos;
-  let expression = "abs(x)";
+  let expression = "x+2";
   this.range = [];
-  this.leftBoundary = -10;
-  this.rightBoundary = 10;
-  this.n = 9;
+  this.leftBoundary = 0;
+  this.rightBoundary = 3;
+  this.n = 30;
   this.rectWidth = (this.rightBoundary-this.leftBoundary)/this.n;
   
-
+  
   // scale is the ratio of pixels to units in the function
   this.scale = createVector(64, 64);
   // refers to the intervals for the labels on the x and y axis
@@ -117,12 +118,12 @@ function Graph() {
       
     }
   }
-  
+  // both of these are wrong: rect(x, y, width, height) x and y are top left corner. 
   this.leftRiemann = () => {
     fill(40, 40, 40, 150);
     for(let i = 0; i< this.n; i++){
-      rect(this.yAxisPos + this.scale.x * (this.leftBoundary+i*this.rectWidth),
-        this.determineY(i),
+      rect(coords[i*this.scale.x].x,
+        coords[i*this.scale.x].y,
         this.rectWidth * this.scale.x,
         this.determineHeight(i)
         )
@@ -131,12 +132,13 @@ function Graph() {
     }
     this.rightRiemann = () => {
       fill(40, 40, 40, 150);
+      
       for(let i = 0; i< this.n; i++){
-        rect(this.yAxisPos + this.scale.x * (this.leftBoundary+(i)*this.rectWidth),
-          this.determineY(i+1),
-          this.rectWidth * this.scale.x,
-          this.determineHeight(i+1)
-          )
+        rect(180+i*this.rectWidth*this.scale.x,
+        this.determineY(i+1),
+        this.rectWidth * this.scale.x,
+        math.abs(evaluateAt(this.leftBoundary+(i+1)*this.rectWidth)) * this.scale.y
+        )
       };
       }
 
@@ -146,7 +148,7 @@ function Graph() {
       //replaces the x in this.function and evaluates it then assigns the result to y which is pushed to coords
       //coords are an array of vectors x,y which have the final positions at which the lines are to be drawn
       
-      for(let i = 0; i<640; i++){
+      for(let i = 0; i<=640; i++){
         coords.push(createVector(180 + i, this.xAxisPos - this.scale.y * evaluateAt(this.leftBoundary+ i/this.scale.x)));
       }
   }
@@ -190,11 +192,8 @@ function Graph() {
 
   //***THESE ARE BAD AND UGLY
   this.determineY = (i) => {
-    if(evaluateAt(this.leftBoundary+i*this.rectWidth) >= 0){
-      return min([this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
-    }else{
-      return max([this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
-    }
+    maximum = max([0, evaluateAt(this.leftBoundary+i*this.rectWidth)]);
+    return 400-maximum*this.scale.y;
   }
   this.determineHeight = (i) => {
     if(evaluateAt(this.leftBoundary+i*this.rectWidth) >= 0){
