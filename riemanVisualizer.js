@@ -22,8 +22,9 @@ function draw() {
   background(256);
   graph.drawGraph();
   graph.drawFunction();
+  graph.midRiemann();
   //graph.leftRiemann();
-  graph.rightRiemann();
+  //graph.rightRiemann();
 
   text(mouseX+ ' , '+mouseY, mouseX, mouseY);
 }
@@ -31,11 +32,11 @@ function draw() {
 function Graph() {
 
   this.xAxisPos;
-  let expression = "x+2";
+  let expression = "x";
   this.range = [];
-  this.leftBoundary = 0;
-  this.rightBoundary = 3;
-  this.n = 30;
+  this.leftBoundary = -10;
+  this.rightBoundary = 10;
+  this.n = 10;
   this.rectWidth = (this.rightBoundary-this.leftBoundary)/this.n;
   
   
@@ -122,27 +123,33 @@ function Graph() {
   this.leftRiemann = () => {
     fill(40, 40, 40, 150);
     for(let i = 0; i< this.n; i++){
-      rect(coords[i*this.scale.x].x,
-        coords[i*this.scale.x].y,
+      rect(180+i*this.rectWidth*this.scale.x,
+        this.determineY(i),
         this.rectWidth * this.scale.x,
-        this.determineHeight(i)
+        math.abs(evaluateAt(this.leftBoundary+(i)*this.rectWidth)) * this.scale.y
         )
     
     };
     }
-    this.rightRiemann = () => {
-      fill(40, 40, 40, 150);
-      
-      for(let i = 0; i< this.n; i++){
-        rect(180+i*this.rectWidth*this.scale.x,
-        this.determineY(i+1),
+  this.rightRiemann = () => {
+    fill(40, 40, 40, 150);
+    for(let i = 0; i< this.n; i++){
+      rect(180+i*this.rectWidth*this.scale.x,
+      this.determineY(i+1),
+      this.rectWidth * this.scale.x,
+      math.abs(evaluateAt(this.leftBoundary+(i+1)*this.rectWidth)) * this.scale.y
+      )
+    };
+    }
+  this.midRiemann = () => {
+    fill(40,40,40,150);
+    for(let i = 0; i< this.n; i++){
+      rect(180+i*this.rectWidth*this.scale.x,
+        this.determineY(i+0.5),
         this.rectWidth * this.scale.x,
-        math.abs(evaluateAt(this.leftBoundary+(i+1)*this.rectWidth)) * this.scale.y
-        )
-      };
-      }
-
-  
+        math.abs(evaluateAt(this.leftBoundary+(i)*this.rectWidth+this.rectWidth*0.5)) * this.scale.y)
+  }
+}
 
   this.executeFunction = function(){
       //replaces the x in this.function and evaluates it then assigns the result to y which is pushed to coords
