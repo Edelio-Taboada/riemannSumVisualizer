@@ -1,7 +1,8 @@
 
 let coords = [];
 let graph;
-
+let expression;
+let mode = "left"
 const math = window.math
 
 
@@ -15,24 +16,54 @@ function setup() {
   graph.calibrateScaleY();
   graph.drawGraph();
   graph.executeFunction();
-  console.log(coords)
 }
 
 function draw() {
   background(256);
   graph.drawGraph();
   graph.drawFunction();
-  graph.midRiemann();
-  //graph.leftRiemann();
-  //graph.rightRiemann();
+  switch(mode){
+    case "left":
+      graph.leftRiemann();
+      break;
+    case "right":
+      graph.rightRiemann();
+      break;
+    case "mid":
+      graph.midRiemann();
+      break;
+    default:
+  }
 
   text(mouseX+ ' , '+mouseY, mouseX, mouseY);
 }
 
+let myScript = () => {
+  coords = [];
+  graph.range = [];
+  expression = document.getElementById('function').value;
+  graph.leftBoundary = parseFloat(document.getElementById('lb').value); graph.rightBoundary = parseFloat(document.getElementById('rb').value);
+  graph.n = parseInt(document.getElementById('n').value);
+  for(let i=0;i<4;i++){
+    if(document.getElementsByName("mode")[i].checked){ mode=document.getElementsByName("mode")[i].value; break;}
+  }
+  
+  graph.rectWidth = (graph.rightBoundary-graph.leftBoundary)/graph.n;
+  graph.calibrateSkipX();
+  graph.calibrateScaleX();
+  graph.fillRange();
+  graph.calibrateSkipY();
+  graph.calibrateScaleY();
+  graph.drawGraph();
+  graph.executeFunction();
+  
+}
+
+
 function Graph() {
 
   this.xAxisPos;
-  let expression = "x";
+  expression = document.getElementById('function').value;
   this.range = [];
   this.leftBoundary = -10;
   this.rightBoundary = 10;
@@ -45,7 +76,7 @@ function Graph() {
   // refers to the intervals for the labels on the x and y axis
   this.skip = createVector(1, 1);
 
-  this.drawGraph = function () {
+  this.drawGraph = () => {
     fill(0);
     textSize(20);
     //y axis
@@ -111,7 +142,7 @@ function Graph() {
 
   //draws a bunch of small lines jumping by 1 pixel which generate the function
   //This is why functions which are non-continuous look wonky
-  this.drawFunction = function(){
+  this.drawFunction = () => {
     strokeWeight(2)
     fill(0);
     for(let i = 0; i<coords.length-1;i++){
@@ -151,7 +182,7 @@ function Graph() {
   }
 }
 
-  this.executeFunction = function(){
+  this.executeFunction = () => {
       //replaces the x in this.function and evaluates it then assigns the result to y which is pushed to coords
       //coords are an array of vectors x,y which have the final positions at which the lines are to be drawn
       
@@ -170,11 +201,11 @@ function Graph() {
     this.skip.y = bigger/5;
 }
 
-  this.calibrateScaleX = function(){
+  this.calibrateScaleX = () => {
       this.scale.x = 64/this.skip.x;
 
   }
-  this.calibrateScaleY = function(){
+  this.calibrateScaleY = () =>{
 
     this.scale.y = 64/this.skip.y;
 }
@@ -197,28 +228,19 @@ function Graph() {
     return j;
   }
 
-  //***THESE ARE BAD AND UGLY
   this.determineY = (i) => {
     maximum = max([0, evaluateAt(this.leftBoundary+i*this.rectWidth)]);
     return 400-maximum*this.scale.y;
   }
-  this.determineHeight = (i) => {
-    if(evaluateAt(this.leftBoundary+i*this.rectWidth) >= 0){
-      return this.xAxisPos - min([this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
-    }else{
-      return this.xAxisPos - max([this.xAxisPos, (this.xAxisPos-this.scale.y*evaluateAt(this.leftBoundary+i*this.rectWidth))])
-    }
-  }
 
-  //***
-  this.rMax = function(){
+  this.rMax = () => {
     maximum = max(this.range)
     if(maximum < 0){
       return 0;
     }
     return maximum;
   }
-  this.rMin = function(){
+  this.rMin = () => {
     minimum = min(this.range)
     if(minimum > 0){
       return 0;

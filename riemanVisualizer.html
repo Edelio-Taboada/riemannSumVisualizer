@@ -9,10 +9,30 @@
     <title>Riemann Sum Visualizer</title>
   </head>
   <body>
-    <form action="">
       <label for="function">Function:</label>
-      <input type="text" name="function" id="function" value="x^2" />
-      <input type="submit" name="submit" id="submit" />
+      <input type="text" id="function" size="10" value="x" onblur="myScript()"/> <br />
+      <br />
+      <label>Left boundary:</label>
+      <input type="text" id="lb" value="-10" size="5" onblur="myScript()"/>
+      <label> Right Boundary:</label>
+      <input type="text" id="rb" value="10" size="5" onblur="myScript()"/>
+      <br/>
+      <br/>
+      <label>Number of Rectangles: </label>
+      <input type="text" id="n" value="10" size="5" onblur="myScript()"/>
+      <br/>
+      <br/>
+      <form >
+        <input type="radio" id="left" value="left" onblur="myScript()" name="mode">
+        <label for="left">Left Riemann Sum</label>
+        <input type="radio" id="right" value="right" onblur="myScript()" name="mode">
+        <label for="right">Right Riemann Sum</label>
+        <input type="radio" id="mid" value="mid" onblur="myScript()" name="mode">
+        <label for="mid">Midpoint Sum</label>
+        <input type="radio" id="trap" value="trap" name="mode" onblur="myScript()">
+        <label for="trap">Trapezoidal Sum</label>
+      </form>
+
     </form>
     <br />
     <br />
