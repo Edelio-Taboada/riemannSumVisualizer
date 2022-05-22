@@ -8,6 +8,7 @@ const math = window.math
 
 
 function setup() {
+  frameRate(10)
   createCanvas(900, 800);
   graph = new Graph();
   graph.calibrateSkipX();
@@ -23,6 +24,7 @@ function draw() {
   background(256);
   graph.drawGraph();
   graph.drawFunction();
+  graph.setArea();
   if(inf){
     if(parseInt(document.getElementById('n').value) == 999){
       inf = !inf
@@ -190,7 +192,7 @@ function Graph() {
       rect(180+i*this.rectWidth*this.scale.x,
         this.determineY(i+0.5),
         this.rectWidth * this.scale.x,
-        math.abs(evaluateAt(this.leftBoundary+(i)*this.rectWidth+this.rectWidth*0.5)) * this.scale.y)
+        math.abs(evaluateAt(this.leftBoundary+(i+0.5)*this.rectWidth)) * this.scale.y)
   }
   };
 //creates the trapezoids using p5js quad method and drawing the points in counter clockwise order
@@ -275,4 +277,30 @@ function Graph() {
     return minimum;
   }
 
+  this.setArea = () => {
+    label = document.getElementById('area')
+    sum = 0;
+    switch(mode){
+      case "left":
+        for(let i = 0; i<this.n; i++){
+          sum+=this.rectWidth*evaluateAt(this.leftBoundary+(i)*this.rectWidth)
+        } 
+        break;
+      case "right":
+        for(let i = 0; i<this.n; i++){
+          sum+=this.rectWidth*evaluateAt(this.leftBoundary+(i+1)*this.rectWidth)
+        } 
+        break;
+      case "mid":
+        for(let i = 0; i<this.n; i++){
+          sum+=this.rectWidth*evaluateAt(this.leftBoundary+(i+0.5)*this.rectWidth)
+        } 
+        break;
+      default:
+        for(let i = 0; i<this.n; i++){
+          sum+=this.rectWidth*(evaluateAt(this.leftBoundary+(i)*this.rectWidth)+evaluateAt(this.leftBoundary+(i+1)*this.rectWidth))/2
+        } 
+    }
+    label.innerHTML = "Approximate Area: " + sum;
+  }
 }
