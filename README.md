@@ -19,3 +19,4 @@ This calculator also always displays the entire graph at once to make visualizat
 - Then select which form of the Riemann sum you want to visualize
 - Each selection will take place when the field is unselected/blurred
 - If you want to see how the Riemann sum becomes more accurate as the n approaches infinity, press the "Go To Infinity!" button
+- The area as approximated by the Riemann sum selected is displayed above the graph

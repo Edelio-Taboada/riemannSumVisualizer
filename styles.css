@@ -1,3 +1,13 @@
 canvas {
   display: block;
 }
+body{
+  padding-top:0px;
+  padding-bottom: 0px;
+}
+#foot {
+  overflow-wrap: break-word;
+  width: 70%;
+  position:absolute;
+  top:1100px;
+}
