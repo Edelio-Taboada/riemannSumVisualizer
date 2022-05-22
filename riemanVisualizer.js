@@ -33,6 +33,7 @@ function draw() {
       graph.midRiemann();
       break;
     default:
+      graph.trapRiemann();
   }
 
   text(mouseX+ ' , '+mouseY, mouseX, mouseY);
@@ -141,7 +142,7 @@ function Graph() {
 
 
   //draws a bunch of small lines jumping by 1 pixel which generate the function
-  //This is why functions which are non-continuous look wonky
+  //This is why functions which are non-continuous look wonky, especially those with a jump discontinuity or a
   this.drawFunction = () => {
     strokeWeight(2)
     fill(0);
@@ -150,7 +151,8 @@ function Graph() {
       
     }
   }
-  // both of these are wrong: rect(x, y, width, height) x and y are top left corner. 
+
+
   this.leftRiemann = () => {
     fill(40, 40, 40, 150);
     for(let i = 0; i< this.n; i++){
@@ -161,7 +163,7 @@ function Graph() {
         )
     
     };
-    }
+    };
   this.rightRiemann = () => {
     fill(40, 40, 40, 150);
     for(let i = 0; i< this.n; i++){
@@ -171,7 +173,7 @@ function Graph() {
       math.abs(evaluateAt(this.leftBoundary+(i+1)*this.rectWidth)) * this.scale.y
       )
     };
-    }
+    };
   this.midRiemann = () => {
     fill(40,40,40,150);
     for(let i = 0; i< this.n; i++){
@@ -180,7 +182,17 @@ function Graph() {
         this.rectWidth * this.scale.x,
         math.abs(evaluateAt(this.leftBoundary+(i)*this.rectWidth+this.rectWidth*0.5)) * this.scale.y)
   }
-}
+  };
+//creates the trapezoids using p5js quad method and drawing the points in counter clockwise order
+  this.trapRiemann = () => {
+    fill(40,40,40,150);
+    for(let i = 0;i<this.n;i++){
+      quad(180+i*this.rectWidth*this.scale.x, this.determineY(i),
+      180+i*this.rectWidth*this.scale.x, this.determineNotY(i),
+      180+(i+1)*this.rectWidth*this.scale.x, this.determineNotY(i+1),
+      180+(i+1)*this.rectWidth*this.scale.x, this.determineY(i+1))
+    }
+  }
 
   this.executeFunction = () => {
       //replaces the x in this.function and evaluates it then assigns the result to y which is pushed to coords
@@ -232,7 +244,11 @@ function Graph() {
     maximum = max([0, evaluateAt(this.leftBoundary+i*this.rectWidth)]);
     return 400-maximum*this.scale.y;
   }
-
+  // this function returns the y value that determineY() does not
+  this.determineNotY = (i) => {
+    minimum = min([0, evaluateAt(this.leftBoundary+i*this.rectWidth)]);
+    return 400-minimum*this.scale.y;
+  }
   this.rMax = () => {
     maximum = max(this.range)
     if(maximum < 0){
