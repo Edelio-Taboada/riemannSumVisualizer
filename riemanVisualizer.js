@@ -3,6 +3,7 @@ let coords = [];
 let graph;
 let expression;
 let mode = "left"
+let inf = false
 const math = window.math
 
 
@@ -22,6 +23,13 @@ function draw() {
   background(256);
   graph.drawGraph();
   graph.drawFunction();
+  if(inf){
+    if(parseInt(document.getElementById('n').value) == 999){
+      inf = !inf
+    }
+    document.getElementById('n').value = parseInt(document.getElementById('n').value)+1
+    myScript();
+  }
   switch(mode){
     case "left":
       graph.leftRiemann();
@@ -35,10 +43,12 @@ function draw() {
     default:
       graph.trapRiemann();
   }
-
-  text(mouseX+ ' , '+mouseY, mouseX, mouseY);
+  //testing feature
+  //text(mouseX+ ' , '+mouseY, mouseX, mouseY);
 }
-
+let toInfinity = () => {
+  inf = !inf
+}
 let myScript = () => {
   coords = [];
   graph.range = [];
