@@ -184,6 +184,7 @@ function Graph() {
   }
   };
 //creates the trapezoids using p5js quad method and drawing the points in counter clockwise order
+//trapezoidal rule is wonky when the shape has heights that are not in the same direction
   this.trapRiemann = () => {
     fill(40,40,40,150);
     for(let i = 0;i<this.n;i++){
