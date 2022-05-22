@@ -2,10 +2,10 @@
 
 ![Licence](https://img.shields.io/github/license/Edelio-Taboada/riemannSumVisualizer)
 
-## This Riemann sum visualizer is meant to be used, primarily by calculus students, as a learning gadget to help visualize Riemann sums
+## This Riemann sum visualizer is a website meant to be used, primarily by calculus students, as a learning gadget to help visualize Riemann sums
 ### Description
 
-This visualizer is capable of handling left Riemann sums, right Riemann sums, midpoint sums, and trapezoidal sums.
+This visualizer webpage is capable of handling left Riemann sums, right Riemann sums, midpoint sums, and trapezoidal sums.
 This calculator also always displays the entire graph at once to make visualizations comfortable.
 
 ### How to use
