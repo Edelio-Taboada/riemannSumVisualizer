@@ -25,14 +25,18 @@
       <br/>
       <br/>
       <form >
-        <input type="radio" id="left" value="left" onblur="myScript()" name="mode" checked="true">
-        <label for="left">Left Riemann Sum</label>
-        <input type="radio" id="right" value="right" onblur="myScript()" name="mode">
-        <label for="right">Right Riemann Sum</label>
-        <input type="radio" id="mid" value="mid" onblur="myScript()" name="mode">
-        <label for="mid">Midpoint Sum</label>
-        <input type="radio" id="trap" value="trap" name="mode" onblur="myScript()">
-        <label for="trap">Trapezoidal Sum</label>
+        
+        <label for="left"> <input type="radio" id="left" value="left" onchange="myScript()" name="mode" checked="true">
+          Left Riemann Sum</label>
+        
+        <label for="right"><input type="radio" id="right" value="right" onchange="myScript()" name="mode">
+          Right Riemann Sum</label>
+        
+        <label for="mid"><input type="radio" id="mid" value="mid" onchange="myScript()" name="mode">
+          Midpoint Sum</label>
+        
+        <label for="trap"><input type="radio" id="trap" value="trap" name="mode" onchange="myScript()">
+          Trapezoidal Sum</label>
 
       </form>
 

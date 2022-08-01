@@ -304,6 +304,7 @@ function Graph() {
           sum+=this.rectWidth*(evaluateAt(this.leftBoundary+(i)*this.rectWidth)+evaluateAt(this.leftBoundary+(i+1)*this.rectWidth))/2
         } 
     }
-    label.innerHTML = "Approximate Area: " + sum;
+
+    label.innerHTML = "Approximate Area: " + sum.toFixed(5);
   }
 }
