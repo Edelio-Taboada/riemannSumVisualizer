@@ -13,8 +13,9 @@ p{
 }
 input[type=text]{
   border: 5px solid rgb(5, 13, 20); 
-  background-color: #385170;
-  color: white;
+  background-color: white;
+  border-radius: 8px;
+  color: black;
 }
 button:hover {
   transition-duration: 250ms;

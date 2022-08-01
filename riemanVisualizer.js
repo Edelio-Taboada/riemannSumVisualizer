@@ -180,7 +180,7 @@ function Graph() {
     };
     };
   this.rightRiemann = () => {
-    fill(236, 236, 236,200);
+    fill(13, 101, 189,200);
     for(let i = 0; i< this.n; i++){
       rect(180+i*this.rectWidth*this.scale.x,
       this.determineY(i+1),
@@ -190,7 +190,7 @@ function Graph() {
     };
     };
   this.midRiemann = () => {
-    fill(236, 236, 236,200);
+    fill(13, 101, 189,200);
     for(let i = 0; i< this.n; i++){
       rect(180+i*this.rectWidth*this.scale.x,
         this.determineY(i+0.5),
@@ -201,7 +201,7 @@ function Graph() {
 //creates the trapezoids using p5js quad method and drawing the points in counter clockwise order
 //trapezoidal rule is wonky when the shape has heights that are not in the same direction
   this.trapRiemann = () => {
-    fill(236, 236, 236);
+    fill(13, 101, 189,200);
     for(let i = 0;i<this.n;i++){
       quad(180+i*this.rectWidth*this.scale.x, this.determineY(i),
       180+i*this.rectWidth*this.scale.x, this.determineNotY(i),
