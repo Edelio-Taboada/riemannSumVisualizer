@@ -21,7 +21,8 @@ function setup() {
 }
 
 function draw() {
-  background(256);
+  background(5, 13, 20);
+  fill(236, 236, 236)
   graph.drawGraph();
   graph.drawFunction();
   graph.setArea();
@@ -90,20 +91,22 @@ function Graph() {
   this.skip = createVector(1, 1);
 
   this.drawGraph = () => {
-    fill(0);
+    fill(236, 236, 236);
     textSize(20);
     //y axis
     strokeWeight(3);
+    stroke(236, 236, 236);
     line(180, 80, 180, 720);
     strokeWeight(1);
     text('y-axis', 180, 40);
     
     
-    fill(0);
+    fill(236, 236, 236);
     textAlign(RIGHT);
     // draw the label lines on the y
  
     for (let i = 0; i <= 10; i++) {
+      stroke(236, 236, 236);
       //short lines that create axis labels
       line(175, i * 64+80, 185, i * 64+80);
       //long lines that create grid
@@ -157,7 +160,7 @@ function Graph() {
   //This is why functions which are non-continuous look wonky, especially those with a jump discontinuity or a
   this.drawFunction = () => {
     strokeWeight(2)
-    fill(0);
+    fill(236, 236, 236, 200);
     for(let i = 0; i<coords.length-1;i++){
       line(coords[i].x, coords[i].y,coords[i+1].x, coords[i+1].y);
       
@@ -166,7 +169,7 @@ function Graph() {
 
 
   this.leftRiemann = () => {
-    fill(40, 40, 40, 150);
+    fill(13, 101, 189,200);
     for(let i = 0; i< this.n; i++){
       rect(180+i*this.rectWidth*this.scale.x,
         this.determineY(i),
@@ -177,7 +180,7 @@ function Graph() {
     };
     };
   this.rightRiemann = () => {
-    fill(40, 40, 40, 150);
+    fill(236, 236, 236,200);
     for(let i = 0; i< this.n; i++){
       rect(180+i*this.rectWidth*this.scale.x,
       this.determineY(i+1),
@@ -187,7 +190,7 @@ function Graph() {
     };
     };
   this.midRiemann = () => {
-    fill(40,40,40,150);
+    fill(236, 236, 236,200);
     for(let i = 0; i< this.n; i++){
       rect(180+i*this.rectWidth*this.scale.x,
         this.determineY(i+0.5),
@@ -198,7 +201,7 @@ function Graph() {
 //creates the trapezoids using p5js quad method and drawing the points in counter clockwise order
 //trapezoidal rule is wonky when the shape has heights that are not in the same direction
   this.trapRiemann = () => {
-    fill(40,40,40,150);
+    fill(236, 236, 236);
     for(let i = 0;i<this.n;i++){
       quad(180+i*this.rectWidth*this.scale.x, this.determineY(i),
       180+i*this.rectWidth*this.scale.x, this.determineNotY(i),
