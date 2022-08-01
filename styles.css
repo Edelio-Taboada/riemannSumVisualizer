@@ -12,7 +12,7 @@ p{
   color: #ececec;
 }
 :root {
-  --form-control-color: rebeccapurple;
+  --form-control-color: rgb(13, 101, 189);
 }
 input[type=text]{
   border: 5px solid rgb(5, 13, 20); 
